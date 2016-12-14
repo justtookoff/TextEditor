@@ -1,4 +1,12 @@
-//Edit.h
+/*
+ * Name: Donghwee Kwon
+ * Date: Dec.11.2016
+ * File: Edit.h
+ *
+ * This is the highest class of the entire program
+ * for now
+ *
+ */
 #ifndef _EDIT_H
 #define _EDIT_H
 #include <afxwin.h>
@@ -12,7 +20,7 @@ public:
 	
 	Edit();
 	~Edit();
-	
+	BOOL IsDBCS(Long index);
 
 public:
 

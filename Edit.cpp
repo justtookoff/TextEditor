@@ -1,4 +1,12 @@
-//Edit.cpp
+/*
+ * Name: Donghwee Kwon
+ * Date: Dec.11.2016
+ * File: Edit.cpp
+ *
+ * This is the highest file of this entire program
+ * This is the class that has relationship with MFC
+ */
+
 #include "Edit.h"
 #include "Text.h"
 #include <imm.h>
@@ -30,7 +38,6 @@ Edit::Edit(){
 Edit::~Edit(){
 
 }
-
 
 int Edit::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	CFrameWnd::OnCreate(lpCreateStruct);
@@ -76,8 +83,9 @@ void Edit::OnPaint(){
 	Long textY = 0;
 
 //글자를 보여주는 작업
-	char(*line) = NULL;
+	char(*line) = 0;
 	line = new char[256];
+	line[0] = '\0';
 
 	//text의 length만큼 반복한다.
 	while (i < this->text->GetLength()){
@@ -242,6 +250,42 @@ void Edit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			}
 			if (this->y > 0) {
 				this->y -= 1;
+
+				Long i = 0;
+				Long j = 0;
+				Long index;
+				Long byteCount[256];
+				//1. -1된 행의 열보다 작은동안 반복한다.
+				while (i < this->x){
+					//1.1. 그 열의 배열에서 몇번째인지 알아낸다.
+					index = this->text->Position(this->y, i);
+					//1.2. index번쨰에 있는 글자가 한글이면
+					if (this->IsDBCS(index) == TRUE){
+						//1.2.1. 정수배열에 2를 넣는다.
+						byteCount[j] = 2;
+						j++;
+						i++;
+					}
+					//1.3. index번째에 있는 글자가 한글이 아닌 다른 글자이면
+					else{
+						byteCount[j] = 1;
+						j++;
+					}
+					i++;
+				}
+				//2. 정수배열 마지막에 0을 넣어준다.
+				byteCount[j] = 0;
+
+				i = 0;
+				//3. 위치된 행의 열을 초기화시켜준다.
+				this->x = 0;
+				//4. 정수배열이 0이 아닐때까지 반복한다.
+				while (byteCount[i] != 0){
+					//4.1. 초기화된 열에 정수배열에 저장된 것을 차례로 넣어줘서 증가시킨다.
+					this->x = this->x + byteCount[i];
+					i++;
+				}
+
 			}
 			if (this->x > this->text->GetRowLength(this->y)) {
 				this->x = this->text->GetRowLength(this->y);
@@ -254,7 +298,34 @@ void Edit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			this->startCopy = false;
 			//Caret 이동
 			if (this->y > 0) {
-				this->y -= 1;				
+				this->y -= 1;
+
+				Long i = 0;
+				Long j = 0;
+				Long index;
+				Long byteCount[256];
+				while (i < this->x){
+					index = this->text->Position(this->y, i);
+					if (this->IsDBCS(index) == TRUE){
+						byteCount[j] = 2;
+						j++;
+						i++;
+					}
+					else{
+						byteCount[j] = 1;
+						j++;
+					}
+					i++;
+				}
+				byteCount[j] = 0;
+
+				i = 0;
+				this->x = 0;
+				while (byteCount[i] != 0){
+					this->x = this->x + byteCount[i];
+					i++;
+				}
+
 			}
 			if (this->x > this->text->GetRowLength(this->y)) {
 				this->x = this->text->GetRowLength(this->y);				
@@ -283,19 +354,73 @@ void Edit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			//Caret 이동
 			if (this->y < this->text->GetMaxRow()) {
 				this->y += 1;//String 이동
-			this->current = this->text->Position(this->y, this->x);
+
+				Long i = 0;
+				Long j = 0;
+				Long index;
+				Long byteCount[256];
+				while (i < this->x){
+					index = this->text->Position(this->y, i);
+					if (this->IsDBCS(index) == TRUE){
+						byteCount[j] = 2;
+						j++;
+						i++;
+					}
+					else{
+						byteCount[j] = 1;
+						j++;
+					}
+					i++;
+				}
+				byteCount[j] = 0;
+
+				i = 0;
+				this->x = 0;
+				while (byteCount[i] != 0){
+					this->x = this->x + byteCount[i];
+					i++;
+				}
+				
 			}
 			if (this->x > this->text->GetRowLength(this->y)) {
 				this->x = this->text->GetRowLength(this->y);//String 이동
-			this->current = this->text->Position(this->y, this->x);
+			
 			}			
+			this->current = this->text->Position(this->y, this->x);
 		}
 		else {
 			this->startMakeBlock = false;
 			this->startCopy = false;
 			//Caret 이동
 			if (this->y < this->text->GetMaxRow()) {
-				this->y += 1;				
+				this->y += 1;
+				
+				Long i = 0;
+				Long j = 0;
+				Long index;
+				Long byteCount[256];
+				while (i < this->x){
+					index = this->text->Position(this->y, i);
+					if (this->IsDBCS(index) == TRUE){
+						byteCount[j] = 2;
+						j++;
+						i++;
+					}
+					else{
+						byteCount[j] = 1;
+						j++;
+					}
+					i++;
+				}
+				byteCount[j] = 0;
+
+				i = 0;
+				this->x = 0;
+				while (byteCount[i] != 0){
+					this->x = this->x + byteCount[i];
+					i++;
+				}
+
 			}
 			if (this->x > this->text->GetRowLength(this->y)) {
 				this->x = this->text->GetRowLength(this->y);				
@@ -322,9 +447,13 @@ void Edit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 				this->startCopy = true;
 			}
 	
-
 			if (this->x > 0) {
-				this->x -= 1;
+				if (this->IsDBCS(this->current - 1) == TRUE){
+					this->x -= 2;
+				}
+				else{
+					this->x -= 1;
+				}
 			}
 			else if (this->x == 0 && this->y > 0) {
 				this->y -= 1;
@@ -339,8 +468,14 @@ void Edit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			this->startCopy = false;
 			//Caret 이동
 			if (this->x > 0) {
-				this->x -= 1;
-			}else if (this->x == 0 && this->y > 0) {
+				if (this->IsDBCS(this->current - 1) == TRUE){
+					this->x -= 2;
+				}
+				else{
+					this->x -= 1;
+				}
+			}
+			else if (this->x == 0 && this->y > 0) {
 				this->y -= 1;
 				this->x = this->text->GetRowLength(this->y);
 			}
@@ -366,7 +501,12 @@ void Edit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 				this->startCopy = true;
 			}
 			if (this->x < this->text->GetRowLength(this->y)) {
-				this->x += 1;
+				if (this->IsDBCS(this->current) == TRUE){
+					this->x += 2;
+				}
+				else{
+					this->x += 1;
+				}
 			}
 			else if (this->x == this->text->GetRowLength(this->y) && this->y < this->text->GetMaxRow()) {
 				this->y += 1;
@@ -380,7 +520,12 @@ void Edit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			this->startCopy = false;
 			//Caret 이동
 			if (this->x < this->text->GetRowLength(this->y)) {
-				this->x += 1;
+				if (this->IsDBCS(this->current) == TRUE){
+					this->x += 2;
+				}
+				else{
+					this->x += 1;
+				}
 			}
 			else if (this->x == this->text->GetRowLength(this->y) && this->y < this->text->GetMaxRow()) {
 				this->y +=1;
@@ -534,12 +679,22 @@ void Edit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		break;
 	case VK_BACK:
 		if (this->isClicked == false && this->startMakeBlock == false) {
-			
-			this->current = this->text->BackSpace(this->current);
-		
-			
+			if (this->y > 0 || this->x > 0){
+
+				//조립 완성된 한글을 지울때
+				if (this->IsDBCS(this->current - 1) == TRUE){
+					this->text->BackSpace(this->current);
+					this->text->BackSpace(this->current - 1);
+				}
+				//한글 아닌 글자를 지울 때
+				else{
+					this->current = this->text->BackSpace(this->current);;
+				}
+	
+			}
 			this->y = this->text->GetRow();
 			this->x = this->text->GetColumn();
+		
 
 		}
 		else if (this->isClicked == false && this->startMakeBlock == true) {
@@ -556,8 +711,16 @@ void Edit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		break;
 	case VK_DELETE:
 		if (this->isClicked == false && this->startMakeBlock == false) {
-		
-			this->text->Delete(this->current);
+			
+			//한글이면
+			if (this->IsDBCS(this->current) == TRUE){
+				this->text->Delete(this->current);
+				this->text->Delete(this->current);
+			}
+			//다른 문자이연
+			else{
+				this->text->Delete(this->current);
+			}
 		
 		}
 		else if (this->isClicked == false && this->startMakeBlock == true) {
@@ -623,11 +786,11 @@ void Edit::OnChar(UINT nChar, UINT nRepcnt, UINT nFlags){
 			}
 			this->text->Write(this->text->GetCurrent(), nChar);
 			(this->x)++;
-			this->current = this->text->Position(this->y, this->x);
 			
-			this->bComp = false;
-
+			this->current = this->text->Position(this->y, this->x);
 			SetCaretPos(CPoint((this->x) * 6, (this->y) * 15));
+
+			this->bComp = false;
 			this->Invalidate();
 		}
 		break;
@@ -641,10 +804,13 @@ void Edit::OnChar(UINT nChar, UINT nRepcnt, UINT nFlags){
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //한글 입력
 ////////////////////////////////////////////////////////////////////////////////////////////////
+BOOL Edit::IsDBCS(Long index){
+	return (IsDBCSLeadByte(this->text->GetAt(index)));
+}
 
 LONG Edit::OnHangeulComposition(UINT wParam, LPARAM lParam){
 
-	DWORD letterLength = 0; //composition 길이
+	Long letterLength = 0; //composition 길이
 	char *letterComposition = NULL; //composition 메모리
 	LPARAM compositionFlag = (LPARAM)lParam;
 	HIMC hIMC;
@@ -652,26 +818,28 @@ LONG Edit::OnHangeulComposition(UINT wParam, LPARAM lParam){
 	//기본 IME를 취득한다.
 	hIMC = ImmGetContext(GetSafeHwnd());
 	if (hIMC != NULL){
-
+		
 		//문자를 조립중일 때
-		if (compositionFlag == 24600){
-
+		if (compositionFlag & GCS_COMPSTR){
+			
 			//composition의 길이를 구한다.
 			letterLength = ImmGetCompositionString(hIMC, GCS_COMPSTR, NULL, 0);
 			letterComposition = new char[letterLength + 1];
 			ImmGetCompositionString(hIMC, GCS_COMPSTR, letterComposition, letterLength);
-			ImmReleaseContext(GetSafeHwnd(), hIMC);
-			
-			if (this->startMakeBlock == true) {
+			letterComposition[letterLength] = '\0';
+
+			if (this->startMakeBlock == true){
 				this->startMakeBlock = false;
 			}
-			if (this->startCopy == true) {
+			if (this->startCopy == true){
 				this->startCopy = false;
 			}
-			
+
+			//조립중일때
 			if (this->bComp == true){
-				this->text->Delete(this->text->GetCurrent());
-				this->text->Delete(this->text->GetCurrent());
+				this->current -= 2;
+				this->text->Delete(this->current);
+				this->text->Delete(this->current);
 			}
 
 			if (letterLength == 0){
@@ -681,51 +849,74 @@ LONG Edit::OnHangeulComposition(UINT wParam, LPARAM lParam){
 				this->bComp = true;
 			}
 
-			this->current = this->text->HangeulWrite(this->text->GetCurrent(), letterComposition);
-			
+			this->text->HangeulWrite(this->current, letterComposition);
+
+			this->current += letterLength;
+
+			ImmReleaseContext(GetSafeHwnd(), hIMC);
+
+			if (this->text->GetLength() == this->text->GetCurrent() + 2){
+				this->text->Delete(this->current);
+				this->text->Delete(this->current);
+			}
+
 			//조립이 어떻게 됐는지 알려주기위해서
 			this->process = compositionFlag;
 
+			if (letterComposition != NULL){
+				delete[] letterComposition;
+			}
 		}
 		
 		//조립이 완료되면
 		else if (compositionFlag == 2048){
-		letterLength = ImmGetCompositionString(hIMC, GCS_RESULTSTR, NULL, 0);
-		letterComposition = new char[letterLength + 1];
-		ImmGetCompositionString(hIMC, GCS_RESULTSTR, letterComposition, letterLength);
-		ImmReleaseContext(GetSafeHwnd(), hIMC);
+			letterLength = ImmGetCompositionString(hIMC, GCS_RESULTSTR, NULL, 0);
+			letterComposition = new char[letterLength + 1];
+			ImmGetCompositionString(hIMC, GCS_RESULTSTR, letterComposition, letterLength);
+			letterComposition[letterLength] = '\0';
 
-		if (this->startMakeBlock == true) {
-			this->startMakeBlock = false;
+			if (this->startMakeBlock == true) {
+				this->startMakeBlock = false;
+			}
+			if (this->startCopy == true) {
+				this->startCopy = false;
+			}
+		
+			//조립중일때
+			if (this->bComp == true){
+				this->current -= 2;
+				this->text->Delete(this->current);
+				this->text->Delete(this->current);
+			}
+
+			this->text->Paste(this->current, letterComposition);
+
+			this->x += 2;
+			////////////////////
+			//Istrlen과 같은거
+			Long i = 0;
+			Long count = 0;
+			while (letterComposition[i] != '\0'){
+				count++;
+				i++;
+			}
+			/////////////////////
+
+			this->current += count;
+			this->bComp = false;
+
+			ImmReleaseContext(GetSafeHwnd(), hIMC);
+			//조립이 어떻게 됐는지 알려주기위해서
+			this->process = compositionFlag;
+
+			if (letterComposition != NULL){
+				delete[] letterComposition;
+			}
 		}
-		if (this->startCopy == true) {
-			this->startCopy = false;
-		}
 
-		if (this->bComp == true){
-			this->text->Delete(this->text->GetCurrent());
-			this->text->Delete(this->text->GetCurrent());
-		}
-
-		this->bComp = false;
-
-		this->current = this->text->HangeulComplete(this->text->GetCurrent(), letterComposition);
-		this->x = this->x + 2;
-
-		this->current = this->text->Position(this->y, this->x);
-
-		SetCaretPos(CPoint((this->x) * 6, (this->y) * 15));
-
-		//조립이 어떻게 됐는지 알려주기위해서
-		this->process = compositionFlag;
-		}
-
-
+	
 		this->Invalidate();
-
-		if (letterComposition != NULL){
-			delete[] letterComposition;
-		}
+		SetCaretPos(CPoint((this->x) * 6, (this->y) * 15));
 
 	}
 	return 0;
@@ -830,6 +1021,10 @@ void Edit::OnClose() {
 	if (this->text != NULL) {
 
 		delete this->text;
+	}
+
+	if (this->copyString != NULL) {
+		delete[] this->copyString;
 	}
 	
 	CFrameWnd::OnClose();

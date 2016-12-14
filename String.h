@@ -14,13 +14,6 @@ public:
 	String(const String& source);
 	~String();
 	Long Store(Long index, char object);
-	///////////////////////////////////////////
-	//한글
-	Long HangeulStore(Long index, char object);
-	Long HangeulInsertTwoByte(Long index);
-	Long HangeulInsert(Long index, char object);
-	void HangeulLength();
-	///////////////////////////////////////////
 	Long Store(Long index, char(*object));
 	Long Insert(Long index, char object);
 	Long Insert(Long index, char(*object));
@@ -30,7 +23,12 @@ public:
 	Long Delete(Long index);
 	Long BackSpaceDelete(Long index);
 	Long Erase(Long startIndex, Long endIndex);
-	Long LinearSearchDuplicate(char(*key), Long*(*indexes), Long *count, int(*Compare)(void*one, void *other));
+	////////////////////////////////////////////////
+	//한글
+	Long HangeulWrite(Long index, char(*object));
+	Long HangeulInsert(Long index, char(*object));
+	Long HangeulDelete(Long index);
+	///////////////////////////////////////////////
 	char& GetAt(Long index);
 	Long Position(Long index);
 	void Clear();
