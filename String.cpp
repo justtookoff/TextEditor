@@ -38,70 +38,7 @@ Long String::Store(Long index, char object){
 
 	return this->current;
 }
-////////////////////////////////////////////////////////
-//한글
-///////////////////////////////////////////////////////
-Long String::HangeulStore(Long index, char object){
-	this->front[index] = object;
-	
-	return index;
-}
 
-void String::HangeulLength(){
-	this->length += 2;
-}
-
-
-Long String::HangeulInsertTwoByte(Long index){
-	Long i = 0;
-	char(*temp) = new char[64000];
-
-	while (i < index){
-		temp[i] = this->front[i];
-		i++;
-	}
-
-	index = index + 2;
-
-	while (i < this->GetLength() + 1){
-		temp[index] = this->front[i];
-		index++;
-		i++;
-	}
-
-	if (this->front != 0){
-		delete[] this->front;
-	}
-
-	this->front = temp;
-
-	if (temp != 0){
-		delete[] temp;
-	}
-
-	return index;
-}
-
-
-Long String::HangeulInsert(Long index, char object){
-	Long i;
-
-	i = this->length - 1;
-	while (i >= index){
-		this->front[i + 1] = this->front[i];
-		i--;
-	}
-
-	this->front[index] = object;
-	//this->length += 1;
-	this->current = index + 1;
-	//this->front[this->length] = '\0';
-
-	return this->current;
-}
-////////////////////////////////////////////////////////
-//한글
-///////////////////////////////////////////////////////
 
 Long String::Store(Long index, char(*objects)){
 	Long i = 0;
@@ -126,9 +63,9 @@ Long String::Store(Long index, char(*objects)){
 
 		this->front = temp;
 		this->capacity = this->length + i + 256;
-		j = 0;
 	}
 
+	j = 0;
 	while (j < i){
 		this->front[index + j] = objects[j];
 		this->length += 1;
@@ -139,10 +76,10 @@ Long String::Store(Long index, char(*objects)){
 	this->front[index + j] = '\0';
 	this->current = this->length;
 
+	
 	return this->current;
 
 }
-
 
 Long String::Insert(Long index, char object){
 	Long i;
@@ -219,7 +156,6 @@ Long String::Insert(Long index, char(*object)){
 	return this->current;
 }
 
-
 Long String::AppendFromRear(char object){
 	Long i = 0;
 	char(*temp);
@@ -291,7 +227,6 @@ Long String::AppendFromRear(char(*objects)){
 
 }
 
-
 Long String::Modify(Long index, char object){
 	this->front[index] = object;
 	this->current = index + 1;
@@ -321,7 +256,6 @@ Long String::BackSpaceDelete(Long index){
 
 	if (index != 0){
 
-	
 		while (i <= this->length){
 	
 			this->front[i - 1] = this->front[i];
@@ -330,12 +264,12 @@ Long String::BackSpaceDelete(Long index){
 	
 		}
 
-	this->length -= 1;
-	this->current = index - 1;
+		this->length -= 1;
+		this->current = index - 1;
 	}
 	else{
 
-	this->current = 0;
+		this->current = 0;
 	}
 
 	return this->current;
@@ -371,9 +305,70 @@ Long String::Erase(Long startIndex, Long endIndex){
 	return this->current;
 }
 
+///////////////////////////////////////////////////////////////////
+//한글
+//////////////////////////////////////////////////////////////////
+Long String::HangeulWrite(Long index, char(*object)){
+
+	this->front[index] = object[0];
+	this->front[index + 1] = object[1];
+	this->length += 2;
+
+	this->current = index;
+
+	return this->current;
+}
+
+Long String::HangeulInsert(Long index, char(*object)){
+
+	Long i = 0;
+	Long j = 0;
+	char(*temp) = 0;
+	temp = new char[this->capacity + 2];
+
+	while (i < index){
+		temp[i] = this->front[i];
+		i++;
+	}
+
+	temp[i] = object[0];
+	temp[i + 1] = object[1];
+
+	j = i + 2;
+	while (i <= this->length){
+		temp[j] = this->front[i];
+		j++;
+		i++;
+	}
+
+	if (this->front != 0){
+		delete[] this->front;
+	}
+
+	this->front = temp;
+	this->capacity += 2;
+	this->length += 2;
+	this->current = index + 2;
 
 
-//LinearSearchDuplicate는 잠시보류
+	return this->current;
+
+}
+
+Long String::HangeulDelete(Long index){
+	Long i = index;
+	while (i <= this->length){
+		this->front[i] = this->front[i + 2];
+		i++;
+	}
+	this->length -= 2;
+	this->current = index;
+
+	return this->current;
+}
+///////////////////////////////////////////////////////////////////
+//한글
+//////////////////////////////////////////////////////////////////
 
 char& String::GetAt(Long index){
 

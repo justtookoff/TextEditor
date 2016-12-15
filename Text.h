@@ -14,15 +14,16 @@ public:
 	~Text();
 	Text(const Text& source);
 	Long Write(Long index, char object);
-	//////////////////////////////////////////////////
-	//한글
-	Long HangeulWrite(Long index, char(*object));
-	Long HangeulComplete(Long index, char(*object));
-	/////////////////////////////////////////////////
+
 	Long Delete(Long index);
 	Long BackSpace(Long index);
 	Long Erase(Long startRow, Long startColumn);
-
+	////////////////////////////////////////////
+	//한글
+	Long HangeulWrite(Long index, char(*object));
+	Long HangeulPaste(Long index, char(*object));
+	Long HangeulDelete(Long index);
+	///////////////////////////////////////////
 	Long Paste(Long index, char(*object));
 	char* Copy(Long startRow, Long startColumn);
 	char* Cut(Long startRow, Long startColumn);
@@ -44,6 +45,7 @@ public:
 	Long GetMaxRow(); //추가
 	char* GetString();
 	char& GetAt(Long index); //Edit OnPaint에서 사용
+
 
 private:
 

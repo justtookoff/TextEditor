@@ -1,4 +1,12 @@
-//Edit.h
+/*
+ * Name: Donghwee Kwon
+ * Date: Dec.11.2016
+ * File: Edit.h
+ *
+ * This is the highest class of the entire program
+ * for now
+ *
+ */
 #ifndef _EDIT_H
 #define _EDIT_H
 #include <afxwin.h>
@@ -12,7 +20,7 @@ public:
 	
 	Edit();
 	~Edit();
-	
+	BOOL IsDBCS(Long index);
 
 public:
 
@@ -31,11 +39,17 @@ private:
 
 	bool isClicked;
 	bool startCopy;
+
 	//블럭을 위한
 	bool startMakeBlock;
 	bool bComp;
+
 	//조립중인지 조립이 끝났는지
 	LPARAM process;
+
+	//폰트 사이즈
+	//Long fontSize;
+	//float fontArray[128];
 
 protected :
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

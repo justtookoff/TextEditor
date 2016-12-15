@@ -6,6 +6,7 @@ Text::Text(){
 	this->row = 0;
 	this->column = 0;
 	this->current = 0;
+	
 }
 
 Text::Text(const Text& source){
@@ -13,6 +14,7 @@ Text::Text(const Text& source){
 	this->row = source.row;
 	this->column = source.column;
 	this->current = source.current;
+
 }
 
 Text::~Text(){
@@ -55,82 +57,9 @@ Long Text::Write(Long index, char object){
 
 	return this->current;
 }
-//////////////////////////////////////////////////////////////////////////////////
-//한글
-//////////////////////////////////////////////////////////////////////////////////
-Long Text::HangeulWrite(Long index, char(*object)){
-	
-	// if (index >= this->string.GetLength()){
-		if (this->string.GetLength() < this->string.GetCapacity() - 1){
-			this->current = this->string.HangeulStore(index, object[0]);
-			this->string.HangeulStore(index + 1, object[1]);
-		}
-	//}
-	//else{
-	//	this->current = this->string.HangeulInsertTwoByte(index);
-	//	this->current = this->string.HangeulStore(index, object[0]);
-	//	this->string.HangeulStore(index + 1, object[1]);
-	//}
-	this->string.HangeulLength();
 
-	return this->current;
-}
 
-Long Text::HangeulComplete(Long index, char(*object)){
-	Long i = 0;
-	Long count = 0;
 
-	//몇 줄인지 확인한다.
-	while (object[i] != '\0'){
-
-		count++;
-		i++;
-	}
-
-	if (index == this->string.GetLength()){
-
-		if (this->string.GetLength() + count + 1 >= this->string.GetCapacity()){
-
-		/*	this->current = this->string.AppendFromRear(object[0]);
-			this->string.HangeulStore(index + 1, object[1]);
-			this->string.HangeulStore(index + 2, '\0');*/
-		}
-		else{
-
-			this->current = this->string.HangeulStore(index, object[0]);
-			this->string.HangeulStore(index + 1, object[1]);
-			this->string.HangeulStore(index + 2, '\0');
-		}
-	}
-	else if (index < this->string.GetLength()){
-		this->current = this->string.HangeulInsert(index, object[0]);
-		this->current = this->string.HangeulInsert(index + 1, object[1]);
-	}
-
-	this->string.HangeulLength();
-
-	i = 0;
-
-	while (object[i] != '\0'){
-
-		this->column++;
-		if (object[i] == '\n'){
-
-			this->row++;
-			this->column = 0;
-		}
-		else if (object[i] == '\r'){
-			this->column--;
-
-		}
-		i++;
-	}
-
-	return this->current;
-}
-//////////////////////////////////////////////////////////////////////////////////
-//한글
-//////////////////////////////////////////////////////////////////////////////////
 Long Text::Delete(Long index){
 	if (index < this->string.GetLength()){
 		if (this->string.GetAt(index) == '\r'){
@@ -211,7 +140,95 @@ Long Text::Erase(Long startRow, Long startColumn){
 
 	return this->current;
 }
+////////////////////////////////////////////////////////////////////////////////////
+//한글
+////////////////////////////////////////////////////////////////////////////////////
+Long Text::HangeulWrite(Long index, char(*object)){
+	Long i = 0;
+	Long count = 0;
 
+	while (object[i] != '\0'){
+
+		count++;
+		i++;
+	}
+
+	if (index == this->string.GetLength()){
+
+	
+		this->current = this->string.HangeulWrite(index, object);
+		
+	}
+	else if (index < this->string.GetLength()){
+		this->current = this->string.HangeulInsert(index, object);
+	}
+
+	/*if (this->GetLength() < this->GetCapacity() - 1){
+		this->current = this->string.HangeulWrite(index, object);
+	}*/
+
+	return this->current;
+}
+
+Long Text::HangeulPaste(Long index, char(*object)){
+
+	Long i = 0;
+	Long count = 0;
+
+	while (object[i] != '\0'){
+
+		count++;
+		i++;
+	}
+
+	if (index == this->string.GetLength()){
+
+		if (this->string.GetLength() + count + 1 >= this->string.GetCapacity()){
+
+			this->current = this->string.AppendFromRear(object);
+		}
+		else{
+
+			this->current = this->string.Store(index, object);
+		}
+	}
+	else if (index < this->string.GetLength()){
+		this->current = this->string.HangeulInsert(index, object);
+	}
+
+	i = 0;
+
+	while (object[i] != '\0'){
+
+		this->column++;
+		if (object[i] == '\n'){
+
+			this->row++;
+			this->column = 0;
+		}
+		else if (object[i] == '\r'){
+			this->column--;
+
+		}
+		i++;
+	}
+
+	return this->current;
+}
+
+Long Text::HangeulDelete(Long index){
+	if (index < this->string.GetLength()){
+		if (this->string.GetAt(index) == '\r'){
+			this->current = this->string.HangeulDelete(index);
+
+		}
+		this->current = this->string.HangeulDelete(index);
+	}
+	return this->current;
+}
+////////////////////////////////////////////////////////////////////////////////////
+//한글
+////////////////////////////////////////////////////////////////////////////////////
 
 Long Text::Paste(Long index, char(*object)){
 
