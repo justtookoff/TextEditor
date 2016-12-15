@@ -39,11 +39,17 @@ private:
 
 	bool isClicked;
 	bool startCopy;
+
 	//블럭을 위한
 	bool startMakeBlock;
 	bool bComp;
+
 	//조립중인지 조립이 끝났는지
 	LPARAM process;
+
+	//폰트 사이즈
+	//Long fontSize;
+	//float fontArray[128];
 
 protected :
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

@@ -59,6 +59,30 @@ int Edit::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	//텍스트 할당
 	this->text = new Text;
 
+	//폰트생성하기
+	//char ascii;
+	//float temp[128];
+	//CSize fontSize;
+	//CPaintDC dc(this);
+	//fontSize = dc.GetTextExtent('a');
+
+	//this->fontSize = fontSize.cy;
+
+	//Long i = 1;
+	//while (i < 128){
+	//	ascii = (char)i;
+	//	fontSize = dc.GetTextExtent(ascii);
+	//	temp[i] = fontSize.cx;
+	//	i++;
+	//}
+	//temp[0] = temp[32];
+
+	//i = 0;
+	//while (i < 128){
+	//	this->fontArray[i] = (float)temp[i] / (float)fontSize.cy;
+	//	i++;
+	//}
+	
 	//카렛 설정 + 카렛 보여주기
 	CreateSolidCaret(2, 15);
 	SetCaretPos(CPoint((this->x) * 6, (this->y) * 15));
@@ -72,6 +96,7 @@ void Edit::OnPaint(){
 	//그림 그리기 준비
 	PAINTSTRUCT Ps;
 	CDC *pDC = BeginPaint(&Ps);
+	
 	//폰트를 설정함
 	CFont myfont;
 	myfont.CreateFont(12, 0, 0, 0, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, "굴림체");
@@ -752,6 +777,7 @@ void Edit::OnKeyUP(UINT nChar, UINT nRepCnet, UINT nFlags) {
 void Edit::OnChar(UINT nChar, UINT nRepcnt, UINT nFlags){
 
 	switch (nChar) {
+
 	case VK_RETURN:
 		if (this->startMakeBlock == true) {
 			this->text->Erase(this->startY, this->startX);
@@ -768,27 +794,35 @@ void Edit::OnChar(UINT nChar, UINT nRepcnt, UINT nFlags){
 		(this->y)++;
 		this->current = this->text->Position(this->y, this->x);
 
-		SetCaretPos(CPoint((this->x) * 6, (this->y) * 15));
+		SetCaretPos( CPoint( (this->x) * 6, (this->y) * 15) );
 		ShowCaret();
 		this->Invalidate();
 		break;
+
 	case VK_BACK:
 		break;
 	
 	//글자가 들어감
 	default:
 		if (TRUE != IsCTRLPressed()) {
+
 			if (this->startMakeBlock == true) {
 				this->startMakeBlock = false;
 			}
 			if (this->startCopy == true) {
 				this->startCopy = false;
 			}
-			this->text->Write(this->text->GetCurrent(), nChar);
+
+		   this->text->Write(this->text->GetCurrent(), nChar);
 			(this->x)++;
 			
+			/*Long i = 0;
+			while (this->fontArray[i] != (float)nChar){
+				i++;
+			}*/
+			
 			this->current = this->text->Position(this->y, this->x);
-			SetCaretPos(CPoint((this->x) * 6, (this->y) * 15));
+			SetCaretPos(CPoint( (this->x) * 6, (this->y) * 15) );
 
 			this->bComp = false;
 			this->Invalidate();
@@ -821,7 +855,9 @@ LONG Edit::OnHangeulComposition(UINT wParam, LPARAM lParam){
 		
 		//문자를 조립중일 때
 		if (compositionFlag & GCS_COMPSTR){
-			
+			//한글을 조립중일때는 12짜리 캐럿 생성
+			CreateSolidCaret(12, 15);
+
 			//composition의 길이를 구한다.
 			letterLength = ImmGetCompositionString(hIMC, GCS_COMPSTR, NULL, 0);
 			letterComposition = new char[letterLength + 1];
@@ -870,6 +906,9 @@ LONG Edit::OnHangeulComposition(UINT wParam, LPARAM lParam){
 		
 		//조립이 완료되면
 		else if (compositionFlag == 2048){
+			//한글 조립이 완성되면 원래 캐럿 사이즈로 변환
+			CreateSolidCaret(2, 15);
+
 			letterLength = ImmGetCompositionString(hIMC, GCS_RESULTSTR, NULL, 0);
 			letterComposition = new char[letterLength + 1];
 			ImmGetCompositionString(hIMC, GCS_RESULTSTR, letterComposition, letterLength);
@@ -884,6 +923,7 @@ LONG Edit::OnHangeulComposition(UINT wParam, LPARAM lParam){
 		
 			//조립중일때
 			if (this->bComp == true){
+
 				this->current -= 2;
 				this->text->Delete(this->current);
 				this->text->Delete(this->current);
@@ -916,6 +956,7 @@ LONG Edit::OnHangeulComposition(UINT wParam, LPARAM lParam){
 
 	
 		this->Invalidate();
+		
 		SetCaretPos(CPoint((this->x) * 6, (this->y) * 15));
 
 	}
